@@ -1,8 +1,8 @@
 /** Creep生产函数 @param {String, Int, Array}  **/
 function createCreep(role, NUM, body) {
     var Mycreeps = _.filter(Game.creeps, (creep) => creep.memory.role == role);
-    // Creep小于NUM则新创建一个
-    if (Mycreeps.length < NUM && Game.spawns['Spawn1'].store.getFreeCapacity(RESOURCE_ENERGY) < 100) {
+    // Creep小于NUM则新创建一个0
+    if (Mycreeps.length < NUM && Game.spawns['Spawn1'].spawnCreep(body, "test", { dryRun: true }) == 0) {
         for (let i = 0; i < NUM; i++) {
             const name = role.charAt(0).toUpperCase() + role.slice(1) + i.toString();
             if (!Game.creeps[name]) {
@@ -29,9 +29,9 @@ function createCreep(role, NUM, body) {
 var roleCreate = {
     /* @param */
     create: function () {
-        const NUM_HARVESTER = 3;
+        const NUM_HARVESTER = 4;
         const NUM_UPGRADER = 5;
-        const NUM_BUILDER = 3;
+        const NUM_BUILDER = 6;
         const NUM_WORKER = 0;
         // delete useless harvester
         for (var name in Memory.creeps) {
@@ -40,9 +40,9 @@ var roleCreate = {
                 console.log('Clearing non-existing creep memory: ', name);
             }
         }
-        createCreep('harvester', NUM_HARVESTER, [WORK, CARRY, MOVE, WORK, MOVE]);
-        createCreep('upgrader', NUM_UPGRADER, [WORK, CARRY, MOVE, MOVE, MOVE]);
-        createCreep('builder', NUM_BUILDER, [WORK, CARRY, MOVE, WORK, MOVE]);
+        createCreep('harvester', NUM_HARVESTER, [WORK, CARRY, MOVE, WORK, CARRY, WORK]);
+        createCreep('upgrader', NUM_UPGRADER, [WORK, CARRY, MOVE, MOVE, WORK, CARRY, WORK]);
+        createCreep('builder', NUM_BUILDER, [WORK, CARRY, MOVE, CARRY, WORK, WORK, CARRY]);
         createCreep('worker', NUM_WORKER, [WORK, CARRY, MOVE, WORK]);
     }
 };
