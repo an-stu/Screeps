@@ -1,8 +1,8 @@
-var roleHarvester = {
+var roleTransferer = {
 
     /** @param {Creep} creep **/
     run: function (creep) {
-        let source_index = 0;
+        const source_index = 1;
         if (creep.memory.transfering && creep.store[RESOURCE_ENERGY] == 0) {
             creep.memory.transfering = false;
             creep.say('🔄 harvest');
@@ -12,10 +12,10 @@ var roleHarvester = {
             creep.say('🚧 transfer');
         }
         if (!creep.memory.transfering) {
-            // harvest
-            var sources = creep.room.find(FIND_SOURCES);
-            if (creep.harvest(sources[source_index]) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(sources[source_index], { visualizePathStyle: { stroke: '#ffaa00' } });
+            // harvest from harvester
+            var harvester = Game.creeps['Harvester' + source_index.toString()];
+            if (console.log(creep.harvest(harvester))) {
+                creep.moveTo(harvester, { visualizePathStyle: { stroke: '#ffaa00' } });
             }
         }
         else {
@@ -47,4 +47,4 @@ var roleHarvester = {
     }
 };
 
-module.exports = roleHarvester;
+module.exports = roleTransferer;
