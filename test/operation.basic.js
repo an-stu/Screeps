@@ -8,7 +8,7 @@ var operationBasic = {
     getEnergyFromSource: function (creep, source) {
         let hasHarvest = creep.harvest(source);
         if (hasHarvest == ERR_NOT_IN_RANGE) {
-            creep.moveTo(source, { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 10 });
+            creep.moveTo(source, { visualizePathStyle: { stroke: '#ffaa00' } });
             return OK;
         }
         else if (hasHarvest == ERR_NOT_ENOUGH_RESOURCES) {
@@ -20,12 +20,12 @@ var operationBasic = {
     /**
      * 从指定的container中获取能量
      * @param {Creep} creep
-     * @param {StructureContainer | StructureStorage} container
+     * @param {StructureContainer} container
      */
-    getEnergyFromContainerOrStorage: function (creep, container) {
+    getEnergyFromContainer: function (creep, container) {
         let hasWithdraw = creep.withdraw(container, RESOURCE_ENERGY);
         if (hasWithdraw == ERR_NOT_IN_RANGE) {
-            creep.moveTo(container, { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 10 });
+            creep.moveTo(container, { visualizePathStyle: { stroke: '#ffaa00' } });
             return OK;
         }
         else if (hasWithdraw == ERR_NOT_ENOUGH_RESOURCES) {
@@ -42,7 +42,7 @@ var operationBasic = {
     transferEnergyToSpawnOrExtension: function (creep, target) {
         let hasTransfer = creep.transfer(target, RESOURCE_ENERGY);
         if (hasTransfer == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target, { visualizePathStyle: { stroke: '#ffffff' }, reusePath: 10 });
+            creep.moveTo(target, { visualizePathStyle: { stroke: '#ffffff' } });
             return OK;
         }
         else if (hasTransfer == ERR_FULL) {
@@ -82,7 +82,7 @@ var operationBasic = {
      */
     transferEnergyToContainerOrStorage: function (creep, target) {
         if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target, { visualizePathStyle: { stroke: '#ffffff' }, reusePath: 10 });
+            creep.moveTo(target, { visualizePathStyle: { stroke: '#ffffff' } });
             return OK;
         }
     },
@@ -94,26 +94,9 @@ var operationBasic = {
      */
     repairStructure: function (creep, target) {
         if (creep.repair(target) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target, { visualizePathStyle: { stroke: '#ffffff' }, reusePath: 10 });
+            creep.moveTo(target, { visualizePathStyle: { stroke: '#ffffff' } });
             return OK;
         }
-    },
-
-    /**
-     * defend room from invaders
-     * @param {String} roomName
-     */
-    defendRoom: function (roomName) {
-        var hostiles = Game.rooms[roomName].find(FIND_HOSTILE_CREEPS);
-        // console.log(hostiles);
-        if (hostiles.length > 0) {
-            var username = hostiles[0].owner.username;
-            Game.notify(`User ${username} spotted in room ${roomName}`);
-            var towers = Game.rooms[roomName].find(
-                FIND_MY_STRUCTURES, { filter: { structureType: STRUCTURE_TOWER } });
-            towers.forEach(tower => tower.attack(hostiles[0]));
-        }
-
     }
 };
 

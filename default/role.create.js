@@ -1,3 +1,5 @@
+const operationBasic = require("./operation.basic");
+
 /** Creep生产函数 @param {String, Int, Array}  **/
 function createCreep(role, NUM, body) {
     var Mycreeps = _.filter(Game.creeps, (creep) => creep.memory.role == role);
@@ -7,10 +9,15 @@ function createCreep(role, NUM, body) {
         for (let i = 0; i < NUM; i++) {
             const name = role.charAt(0).toUpperCase() + role.slice(1) + i.toString();
             if (!Game.creeps[name]) {
-                console.log('Spawning new ' + role + ': ' + name);
-                Game.spawns['Spawn1'].spawnCreep(body, name, {
-                    memory: { role: role }, directions: [BOTTOM]
-                });
+                if (name == 'Harvester2' || name == 'Harvester3') {
+                    body = [WORK, WORK, WORK, MOVE, MOVE, CARRY]
+                }
+                if (Game.spawns['Spawn1'].spawnCreep(body, name, {
+                    memory: { role: role, index: i }, directions: [BOTTOM]
+                }) == OK) {
+                    console.log('Spawning new ' + role + ': ' + name);
+                    break;
+                }
             }
         }
     }
@@ -18,7 +25,7 @@ function createCreep(role, NUM, body) {
     if (Game.spawns['Spawn1'].spawning) {
         var spawningCreep = Game.creeps[Game.spawns['Spawn1'].spawning.name]
         Game.spawns['Spawn1'].room.visual.text(
-            '🛠' + spawningCreep.memory.role,
+            '🛠' + spawningCreep.name,
             Game.spawns['Spawn1'].pos.x + 1,
             Game.spawns['Spawn1'].pos.y,
             { align: 'left', opacity: 0.8 }
@@ -26,13 +33,33 @@ function createCreep(role, NUM, body) {
     }
 }
 
+function createBody(NumOfWork, NumOfCarry, NumOfMove, NumOfAttack) {
+    var body = [];
+    for (let i = 0; i < NumOfWork; i++) {
+        body.push(WORK);
+    }
+    for (let i = 0; i < NumOfCarry; i++) {
+        body.push(CARRY);
+    }
+    for (let i = 0; i < NumOfMove; i++) {
+        body.push(MOVE);
+    }
+    for (let i = 0; i < NumOfAttack; i++) {
+        body.push(ATTACK);
+    }
+    return body;
+}
+
 var roleCreate = {
-    /* @param */
+    /* Create creeps, Keep the number of creeps */
     create: function () {
         const NUM_HARVESTER = 4;
-        const NUM_UPGRADER = 9;
-        const NUM_BUILDER = 5;
-        const NUM_REPAIRER = 2;
+        const NUM_UPGRADER = 2;
+        const NUM_BUILDER = 1;
+        const NUM_CARRIER = 10;
+        const NUM_REPAIRER = 1;
+        const NUM_SCOUT = 0;
+        const NUM_ATTACKER = 1;
         // delete useless harvester
         for (var name in Memory.creeps) {
             if (!Game.creeps[name]) {
@@ -40,10 +67,19 @@ var roleCreate = {
                 console.log('Clearing non-existing creep memory: ', name);
             }
         }
-        createCreep('harvester', NUM_HARVESTER, [WORK, CARRY, MOVE, WORK, CARRY, MOVE, MOVE]);
-        createCreep('upgrader', NUM_UPGRADER, [WORK, CARRY, MOVE, MOVE, WORK, CARRY, WORK, MOVE]);
-        createCreep('builder', NUM_BUILDER, [WORK, CARRY, MOVE, WORK, WORK, CARRY, CARRY, MOVE]);
-        createCreep('repairer', NUM_REPAIRER, [WORK, CARRY, MOVE, WORK, WORK, CARRY, MOVE])
+        createCreep('harvester', NUM_HARVESTER, createBody(5, 0, 2, 0));
+        createCreep('carrier', NUM_CARRIER, createBody(0, 8, 8, 0));
+
+        if (Game.spawns['Spawn1'].room.find(FIND_HOSTILE_CREEPS).length > 0) {
+            createCreep('attacker', NUM_ATTACKER, [TOUGH, TOUGH, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]);
+        }
+
+        if (Memory.carrier == NUM_CARRIER && Memory.harvester > 3) {
+            createCreep('upgrader', NUM_UPGRADER, createBody(10, 2, 6, 0));
+            createCreep('builder', NUM_BUILDER, [WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE]);
+            createCreep('repairer', NUM_REPAIRER, [WORK, WORK, CARRY, CARRY, MOVE, MOVE]);
+            createCreep('scout', NUM_SCOUT, [WORK, CARRY, MOVE, WORK, WORK, MOVE]);
+        }
     }
 };
 

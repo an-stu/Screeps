@@ -4,7 +4,7 @@ var roleUpgrader = {
 
     /** @param {Creep} creep **/
     run: function (creep) {
-        const source_index = 1;
+
         if (creep.memory.upgrading && creep.store[RESOURCE_ENERGY] == 0) {
             creep.memory.upgrading = false;
             creep.say('🔄 harvest');
@@ -18,20 +18,14 @@ var roleUpgrader = {
             operationBasic.upgradeController(creep, creep.room.controller);
         }
         else {
-            // harvest from container if container is not empty
-            var containers = creep.room.find(FIND_STRUCTURES, {
+            // harvest from containerNearController
+            const pos = new RoomPosition(14, 7, 'W31N55');
+            const upgraderContainer = creep.room.find(FIND_STRUCTURES, {
                 filter: (structure) => {
-                    return (structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY] > 0)
+                    return (structure.structureType == STRUCTURE_CONTAINER && structure.pos.isEqualTo(pos))
                 }
-            });
-            if (containers.length > 1) {
-                operationBasic.getEnergyFromContainer(creep, containers[1]);
-            }
-            else {
-                // harvest from source
-                var sources = creep.room.find(FIND_SOURCES);
-                operationBasic.getEnergyFromSource(creep, sources[source_index]);
-            }
+            })[0];
+            operationBasic.getEnergyFromContainerOrStorage(creep, upgraderContainer);
         }
     }
 };

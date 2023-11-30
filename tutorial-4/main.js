@@ -1,5 +1,5 @@
-var roleHarvester = require('role.harvester');
-var roleUpgrader = require('role.upgrader');
+var roleHarvester = require('./roles/role.harvester');
+var roleUpgrader = require('./roles/role.upgrader');
 
 module.exports.loop = function () {
     // delete useless Harvester memory

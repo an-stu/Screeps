@@ -1,13 +1,19 @@
-var roleHarvester = require('./role.harvester');
-var roleUpgrader = require('./role.upgrader');
-var roleCreate = require('./role.create');
-var roleBuilder = require('./role.builder');
-var roleRepairer = require('./role.repairer');
-var operationBasic = require('./operation.basic');
+const roleHarvester = require('./role.harvester');
+const roleUpgrader = require('./role.upgrader');
+const roleCreate = require('./role.create');
+const roleBuilder = require('./role.builder');
+const roleRepairer = require('./role.repairer');
+const roleScout = require('./role.scout');
+const roleCarrier = require('./role.carrier');
+const roleAttacker = require('./role.attacker');
+const operationBasic = require('./operation.basic');
+
 
 
 module.exports.loop = function () {
 	roleCreate.create();
+	// defend room
+	operationBasic.defendRoom('W31N55');
 	// 运行
 	for (var name in Game.creeps) {
 		var creep = Game.creeps[name];
@@ -22,6 +28,15 @@ module.exports.loop = function () {
 		}
 		if (creep.memory.role == 'repairer') {
 			roleRepairer.run(creep);
+		}
+		if (creep.memory.role == 'scout') {
+			roleScout.run(creep);
+		}
+		if (creep.memory.role == 'carrier') {
+			roleCarrier.run(creep);
+		}
+		if (creep.memory.role == 'attacker') {
+			roleAttacker.run(creep);
 		}
 	}
 }

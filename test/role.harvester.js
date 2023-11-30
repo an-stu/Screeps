@@ -1,16 +1,30 @@
+var operationBasic = require('./operation.basic');
+
 var roleHarvester = {
+    // only harvest from source without anything
     /** @param {Creep} creep **/
     run: function (creep) {
-        // Only harvest from the source
-        var sources = creep.room.find(FIND_SOURCES);
-        for (var i = 0; i < sources.length; i++) {
-            if (creep.name == 'Harvester' + i.toString()) {
-                if (creep.harvest(sources[i]) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(sources[i], { visualizePathStyle: { stroke: '#ffaa00' } });
+        const source_index = creep.memory.index;
+        if (source_index < 2) {
+            let source = creep.room.find(FIND_SOURCES)[source_index];
+            let container = creep.room.find(FIND_STRUCTURES, {
+                filter: (structure) => {
+                    return (structure.structureType == STRUCTURE_CONTAINER)
                 }
-                // console.log('Harvester' + i.toString() + ' is harvesting');
+            })[source_index + 1];
+            if (creep.pos != container.pos) {
+                creep.moveTo(container, { visualizePathStyle: { stroke: '#ffffff' } });
+            }
+            else {
+                creep.harvest(source);
             }
         }
+        else if (source_index == 2) {
+            // harvest source from bottom room
+            let source = Game.getObjectById('5bbcab3c9099fc012e633272');
+
+        }
+
     }
 };
 
