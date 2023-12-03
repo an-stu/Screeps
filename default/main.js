@@ -7,6 +7,7 @@ const roleScout = require('./role.scout');
 const roleCarrier = require('./role.carrier');
 const roleAttacker = require('./role.attacker');
 const operationBasic = require('./operation.basic');
+require('./mount')()
 
 
 

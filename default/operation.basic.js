@@ -20,10 +20,11 @@ var operationBasic = {
     /**
      * 从指定的container中获取能量
      * @param {Creep} creep
-     * @param {StructureContainer | StructureStorage} container
+     * @param {StructureContainer} container
      */
-    getEnergyFromContainerOrStorage: function (creep, container) {
+    getEnergyFromContainer: function (creep, container) {
         let hasWithdraw = creep.withdraw(container, RESOURCE_ENERGY);
+        // console.log(hasWithdraw);
         if (hasWithdraw == ERR_NOT_IN_RANGE) {
             creep.moveTo(container, { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 10 });
             return OK;

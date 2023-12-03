@@ -1,9 +1,7 @@
-const operationBasic = require("./operation.basic");
-
-var roleRepairer = {
+export var roleRepairer = {
 
     /** @param {Creep} creep **/
-    run: function (creep) {
+    run: function (creep: Creep) {
         if (creep.memory.repairing && creep.store[RESOURCE_ENERGY] == 0) {
             creep.memory.repairing = false;
             creep.say('🔄 harvest');
@@ -14,41 +12,38 @@ var roleRepairer = {
         }
 
         if (creep.memory.repairing) {
-            var targets = creep.room.find(FIND_STRUCTURES, {
+            // repair structure
+            var structures = creep.room.find(FIND_STRUCTURES, {
                 filter: object => { return object.hits < object.hitsMax && object.structureType == STRUCTURE_CONTAINER || object.structureType == STRUCTURE_RAMPART }
             });
-            targets.sort((a, b) => a.hits - b.hits);
-            if (targets.length > 0) {
-                operationBasic.repairStructure(creep, targets[0]);
+            structures.sort((a, b) => a.hits - b.hits);
+            if (structures.length > 0) {
+                creep.repairStructure(structures[0]);
             }
             else {
                 // build construction sites
-                var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-                if (targets.length) {
-                    operationBasic.buildConstructionSite(creep, targets[0]);
+                var constructions = creep.room.find(FIND_CONSTRUCTION_SITES);
+                if (constructions.length) {
+                    creep.buildConstructionSite(constructions[0]);
                 }
             }
         } else {
             // harvest from container if container is not empty
-            var containers = creep.room.find(FIND_STRUCTURES, {
+            var containers: StructureContainer[] = creep.room.find(FIND_STRUCTURES, {
                 filter: (structure) => {
                     return (structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY] > 0)
                 }
             });
             if (containers.length > 0) {
-                operationBasic.getEnergyFromContainer(creep, containers[0]);
+                creep.getEnergyFromContainer(containers[0]);
             }
             else {
                 // harvest from storage if container is empty
-                var storage = creep.room.find(FIND_STRUCTURES, {
-                    filter: (structure) => {
-                        return (structure.structureType == STRUCTURE_STORAGE && structure.store[RESOURCE_ENERGY] > 0)
-                    }
-                });
-
+                var storage = creep.room.storage;
+                if (storage) {
+                    creep.getEnergyFromContainer(storage);
+                }
             }
         }
     }
 };
-
-module.exports = roleRepairer;

@@ -18,19 +18,11 @@ var roleBuilder = {
 		if (creep.memory.building) {
 			var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
 			if (targets.length) {
-				operationBasic.buildConstructionSite(creep, targets[0]);
+				creep.buildConstructionSite(targets[0]);
 			}
 			else {
 				// if no construction site, fill tower
-				var towers = creep.room.find(FIND_STRUCTURES, {
-					filter: (structure) => {
-						return (structure.structureType == STRUCTURE_TOWER) &&
-							structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
-					}
-				});
-				if (towers.length > 0) {
-					operationBasic.transferEnergyToContainerOrStorage(creep, towers[0]);
-				}
+				if (!creep.fillTower()) { }
 				else {
 					// if no tower, repair structure
 					var targets = creep.room.find(FIND_STRUCTURES, {
@@ -38,11 +30,11 @@ var roleBuilder = {
 					});
 					targets.sort((a, b) => a.hits - b.hits);
 					if (targets.length > 0) {
-						operationBasic.repairStructure(creep, targets[0]);
+						creep.repairStructure(targets[0]);
 					}
 					else {
 						// if no structure to repair, upgrade controller
-						operationBasic.upgradeController(creep, creep.room.controller);
+						creep.upgrade(creep.room.controller);
 					}
 				}
 			}
@@ -54,11 +46,13 @@ var roleBuilder = {
 					return (structure.structureType == STRUCTURE_CONTAINER)
 				}
 			});
-			if (containers[0].store[RESOURCE_ENERGY] > 550) {
-				operationBasic.getEnergyFromContainerOrStorage(creep, containers[0]);
+			if (containers[0].store[RESOURCE_ENERGY] > 0) {
+				creep.getEnergyFromContainer(containers[0]);
 			}
 			else {
-				operationBasic.getEnergyFromContainerOrStorage(creep, containers[creep.memory.index % 2 + 1]);
+				// harvest from storage if container is empty
+				var storage = creep.room.storage;
+				creep.getEnergyFromContainer(storage);
 			}
 		}
 	}

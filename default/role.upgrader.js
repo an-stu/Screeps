@@ -25,7 +25,7 @@ var roleUpgrader = {
                     return (structure.structureType == STRUCTURE_CONTAINER && structure.pos.isEqualTo(pos))
                 }
             })[0];
-            operationBasic.getEnergyFromContainerOrStorage(creep, upgraderContainer);
+            operationBasic.getEnergyFromContainer(creep, upgraderContainer);
         }
     }
 };

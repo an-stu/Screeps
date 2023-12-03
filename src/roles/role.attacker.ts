@@ -1,7 +1,5 @@
-
-var roleAttacker = {
-    /** @param {Creep} creep **/
-    run: function (creep) {
+export var roleAttacker = {
+    run: function (creep: Creep) {
         var target = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS);
         if (target) {
             if (creep.attack(target) == ERR_NOT_IN_RANGE) {
@@ -21,4 +19,4 @@ var roleAttacker = {
     }
 };
 
-module.exports = roleAttacker;
+

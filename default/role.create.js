@@ -15,7 +15,7 @@ function createCreep(role, NUM, body) {
                 if (Game.spawns['Spawn1'].spawnCreep(body, name, {
                     memory: { role: role, index: i }, directions: [BOTTOM]
                 }) == OK) {
-                    console.log('Spawning new ' + role + ': ' + name);
+                    console.log('[create] Spawning new ' + role + ': ' + name);
                     break;
                 }
             }
@@ -33,6 +33,7 @@ function createCreep(role, NUM, body) {
     }
 }
 
+// Creep身体部件生成函数
 function createBody(NumOfWork, NumOfCarry, NumOfMove, NumOfAttack) {
     var body = [];
     for (let i = 0; i < NumOfWork; i++) {
@@ -55,8 +56,8 @@ var roleCreate = {
     create: function () {
         const NUM_HARVESTER = 4;
         const NUM_UPGRADER = 2;
-        const NUM_BUILDER = 1;
-        const NUM_CARRIER = 10;
+        const NUM_BUILDER = 3;
+        const NUM_CARRIER = 9;
         const NUM_REPAIRER = 1;
         const NUM_SCOUT = 0;
         const NUM_ATTACKER = 1;
@@ -72,10 +73,11 @@ var roleCreate = {
 
         if (Game.spawns['Spawn1'].room.find(FIND_HOSTILE_CREEPS).length > 0) {
             createCreep('attacker', NUM_ATTACKER, [TOUGH, TOUGH, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]);
+            console.log('Enemy: ' + Game.spawns['Spawn1'].room.find(FIND_HOSTILE_CREEPS)[0].name);
         }
 
-        if (Memory.carrier == NUM_CARRIER && Memory.harvester > 3) {
-            createCreep('upgrader', NUM_UPGRADER, createBody(10, 2, 6, 0));
+        if (Memory.carrier >= NUM_CARRIER && Memory.harvester > 3) {
+            createCreep('upgrader', NUM_UPGRADER, createBody(10, 2, 3, 0));
             createCreep('builder', NUM_BUILDER, [WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE]);
             createCreep('repairer', NUM_REPAIRER, [WORK, WORK, CARRY, CARRY, MOVE, MOVE]);
             createCreep('scout', NUM_SCOUT, [WORK, CARRY, MOVE, WORK, WORK, MOVE]);
